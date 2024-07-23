@@ -26,7 +26,6 @@ const EditAddress: React.FC = () => {
 		entryInput: "",
 		carrierOption: "",
 		carrierInput: "",
-		
 	});
 	const [showToast, setShowToast] = useState<boolean>(false);
 	const [toastMessage, setToastMessage] = useState<string>("");
