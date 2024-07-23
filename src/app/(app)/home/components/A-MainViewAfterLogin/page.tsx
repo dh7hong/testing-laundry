@@ -30,6 +30,14 @@ const MainView: React.FC = () => {
 
 	let shippingAddress = "" || "배송지를 입력해주세요";
 
+	const viewCoinLaundryNearby = () => {
+		if (shippingAddress === "배송지를 입력해주세요") {
+			router.push("/viewMap/viewMapCurrentAddress");
+		} else if (shippingAddress !== "배송지를 입력해주세요") {
+			router.push("/viewMap/viewMapSelectedAddress");
+		}
+	};
+
 	return (
 		<div className="bg-gray-50">
 			<div className="px-[20px] pb-[20px] bg-background-normal-alternative w-full max-w-[430px] mx-auto relative">
@@ -95,7 +103,10 @@ const MainView: React.FC = () => {
 					/>
 				</div>
 				<div className="w-full h-14">
-					<button className="w-full flex items-center justify-center bg-white p-4 rounded-xl">
+					<button
+						onClick={viewCoinLaundryNearby}
+						className="w-full flex items-center justify-center bg-white p-4 rounded-xl"
+					>
 						<NavigationIcon className="mr-2 w-5 h-6" />
 						<span className="text-label-1-normal font-semibold">
 							내 주위 이용 가능한 코인 세탁소 보기
