@@ -22,15 +22,15 @@ export default function RootLayout({
 	return (
 		<AuthProvider>
 			<html lang="en">
+					<Script
+						src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer,drawing`}
+						strategy="beforeInteractive"
+						/>
 				<Head>
 					<meta
 						name="viewport"
 						content="width=device-width, initial-scale=1, maximum-scale=1"
 					/>
-					<Script
-						src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer,drawing`}
-						strategy="beforeInteractive"
-						/>
 				</Head>
 				<body className={`${pretendard.className} min-h-screen`}>
 					<RecoilRoot>{children}</RecoilRoot>
