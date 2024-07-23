@@ -39,3 +39,18 @@ async function connectToDatabase() {
 }
 
 export { connectToDatabase };
+
+import Verification from './models/Verification';
+
+export async function updateAddressById(id, data) {
+  await connectToDatabase();
+
+  const updatedAddress = await Verification.findByIdAndUpdate(id, data, { new: true });
+w
+  if (!updatedAddress) {
+    throw new Error('Address not found');
+  }
+
+  return updatedAddress;
+}
+

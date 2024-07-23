@@ -11,7 +11,6 @@ export interface IInputAddress extends Document {
   carrierInput?: string;
   phoneNumber: string;
   isDefault: boolean;
-  id: string;
 }
 
 const inputAddressSchema: Schema<IInputAddress> = new Schema(
@@ -26,7 +25,6 @@ const inputAddressSchema: Schema<IInputAddress> = new Schema(
     carrierInput: { type: String },
     phoneNumber: { type: String, required: true },
     isDefault: { type: Boolean, default: false },
-    id: { type: String, required: true, unique: false }
   },
   {
     versionKey: false,

@@ -4,6 +4,7 @@ export interface IVerification extends Document {
   phoneNumber: string;
   verificationCode: number;
   timestamp: number;
+  isConfirmed: boolean; // Add this line to the interface
 }
 
 const verificationSchema: Schema<IVerification> = new Schema(
@@ -11,10 +12,11 @@ const verificationSchema: Schema<IVerification> = new Schema(
     phoneNumber: { type: String, required: true, unique: true },
     verificationCode: { type: Number, required: true },
     timestamp: { type: Number, required: true },
+    isConfirmed: { type: Boolean, default: false }, // Add this line to the schema
   },
   {
     versionKey: false,
-    collection: 'verifications',  // Explicitly set the collection name
+    collection: 'verifications', // Explicitly set the collection name
   }
 );
 
