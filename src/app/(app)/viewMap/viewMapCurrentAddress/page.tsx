@@ -6,168 +6,297 @@ import TopNavigation from "@/app/(public)/crudAddress/components/common/TopNavig
 import { useRouter } from "next/navigation";
 
 declare global {
-  interface Window {
-    kakao: any;
-  }
+	interface Window {
+		kakao: any;
+	}
 }
 
 const MapWithSearch: React.FC = () => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<any>(null);
-  const [selectedPlace, setSelectedPlace] = useState<any>(null);
-  const [homeLocation, setHomeLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [distance, setDistance] = useState<number | null>(null);
+	const mapRef = useRef<HTMLDivElement>(null);
+	const [map, setMap] = useState<any>(null);
+	const [selectedPlace, setSelectedPlace] = useState<any>(null);
+	const [homeLocation, setHomeLocation] = useState<{
+		latitude: number;
+		longitude: number;
+	} | null>(null);
+	const [distance, setDistance] = useState<number | null>(null);
 
-  useEffect(() => {
-    const loadScript = (url: string, callback: () => void) => {
-      const existingScript = document.querySelector(`script[src="${url}"]`);
-      if (!existingScript) {
-        const script = document.createElement("script");
-        script.src = url;
-        script.defer = true;
-        script.onload = callback;
-        script.onerror = () => console.error("Failed to load script:", url);
-        document.head.appendChild(script);
-      } else {
-        callback();
-      }
-    };
+	const searchPlaces = (
+		keyword: string,
+		map: any,
+		center: any,
+		radius: number
+	) => {
+		if (!window.kakao.maps.services) {
+			console.error("Kakao Maps services module is not loaded.");
+			return;
+		}
 
-    const initializeMap = () => {
-      if (window.kakao && window.kakao.maps) {
-        window.kakao.maps.load(() => {
-          const container = mapRef.current;
-          const options = {
-            center: new window.kakao.maps.LatLng(37.566826, 126.9786567),
-            level: 5,
-          };
+		const ps = new window.kakao.maps.services.Places();
+		const infowindow = new window.kakao.maps.InfoWindow({
+			zIndex: 1,
+		});
 
-          const newMap = new window.kakao.maps.Map(container, options);
-          setMap(newMap);
+		ps.keywordSearch(
+			keyword,
+			(data: any, status: any) => {
+				if (status === window.kakao.maps.services.Status.OK) {
+					const bounds = new window.kakao.maps.LatLngBounds();
 
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                const currentLocation = new window.kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                newMap.setCenter(currentLocation);
-                setHomeLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+					data.forEach((place: any) => {
+						displayMarker(place, map, infowindow);
+						bounds.extend(
+							new window.kakao.maps.LatLng(place.y, place.x)
+						);
+					});
 
-                const imageSrc = "/assets/icons/misc/markerStar.png";
-                const imageSize = new window.kakao.maps.Size(24, 35);
-                const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+					map.setBounds(bounds);
+				} else {
+					console.error("Failed to search places:", status);
+					alert(
+						"Failed to search places. Please try again later."
+					);
+				}
+			},
+			{
+				location: center,
+				radius: radius,
+			}
+		);
+	};
 
-                new window.kakao.maps.Marker({
-                  map: newMap,
-                  position: currentLocation,
-                  title: "Current Location",
-                  image: markerImage,
-                });
+	useEffect(() => {
+		const loadScript = (url: string, callback: () => void) => {
+			const existingScript = document.querySelector(
+				`script[src="${url}"]`
+			);
+			if (!existingScript) {
+				const script = document.createElement("script");
+				script.src = url;
+				script.defer = true;
+				script.onload = callback;
+				script.onerror = () =>
+					console.error("Failed to load script:", url);
+				document.head.appendChild(script);
+			} else {
+				callback();
+			}
+		};
 
-                new window.kakao.maps.Circle({
-                  map: newMap,
-                  center: currentLocation,
-                  radius: 1200,
-                  strokeWeight: 5,
-                  strokeColor: "#75B8FA",
-                  strokeOpacity: 0.5,
-                  strokeStyle: "dashed",
-                  fillColor: "#CFE7FF",
-                  fillOpacity: 0.5,
-                });
+		const initializeMap = () => {
+			if (window.kakao && window.kakao.maps) {
+				window.kakao.maps.load(() => {
+					const container = mapRef.current;
+					const options = {
+						center: new window.kakao.maps.LatLng(
+							37.566826,
+							126.9786567
+						),
+						level: 5,
+					};
 
-                searchPlaces("코인 세탁", newMap, currentLocation, 1200);
-              },
-              (error) => {
-                console.error("Error getting current location", error);
-                alert("Error getting current location. Please enable location services and try again.");
-              },
-              { timeout: 3000 }
-            );
-          } else {
-            alert("Geolocation is not supported by this browser.");
-          }
-        });
-      } else {
-        console.error("Kakao Maps script is not loaded correctly.");
-      }
-    };
+					const newMap = new window.kakao.maps.Map(
+						container,
+						options
+					);
+					setMap(newMap);
 
-    if (typeof window !== "undefined" && typeof document !== "undefined") {
-      loadScript(
-        `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services&autoload=false`,
-        () => {
-          console.log("Kakao Maps script loaded.");
-          initializeMap();
-        }
-      );
-    }
-  }, []);
+					if (navigator.geolocation) {
+						navigator.geolocation.getCurrentPosition(
+							(position) => {
+								const currentLocation =
+									new window.kakao.maps.LatLng(
+										position.coords.latitude,
+										position.coords.longitude
+									);
+								newMap.setCenter(currentLocation);
+								setHomeLocation({
+									latitude: position.coords.latitude,
+									longitude: position.coords.longitude,
+								});
 
-  useEffect(() => {
-    if (map && homeLocation) {
-      const currentLocation = new window.kakao.maps.LatLng(homeLocation.latitude, homeLocation.longitude);
-      map.setCenter(currentLocation);
+								const imageSrc =
+									"/assets/icons/misc/markerStar.png";
+								const imageSize = new window.kakao.maps.Size(
+									24,
+									35
+								);
+								const markerImage =
+									new window.kakao.maps.MarkerImage(
+										imageSrc,
+										imageSize
+									);
 
-      searchPlaces("코인 세탁", map, currentLocation, 1200);
-    }
-  }, [map, homeLocation]);
+								new window.kakao.maps.Marker({
+									map: newMap,
+									position: currentLocation,
+									title: "Current Location",
+									image: markerImage,
+								});
 
-  const displayMarker = (place: any, map: any, infowindow: any) => {
-    const marker = new window.kakao.maps.Marker({
-      map: map,
-      position: new window.kakao.maps.LatLng(place.y, place.x),
-    });
+								new window.kakao.maps.Circle({
+									map: newMap,
+									center: currentLocation,
+									radius: 1200,
+									strokeWeight: 5,
+									strokeColor: "#75B8FA",
+									strokeOpacity: 0.5,
+									strokeStyle: "dashed",
+									fillColor: "#CFE7FF",
+									fillOpacity: 0.5,
+								});
 
-    window.kakao.maps.event.addListener(marker, "click", () => {
-      const content = document.createElement("div");
-      content.style.padding = "5px";
-      content.style.fontSize = "12px";
-      content.style.textAlign = "center";
-      content.style.width = "150px";
-      content.style.whiteSpace = "pre-wrap";
-      content.style.wordBreak = "keep-all";
-      content.innerText = place.place_name;
+								searchPlaces(
+									"코인 세탁",
+									newMap,
+									currentLocation,
+									1200
+								);
+							},
+							(error) => {
+								console.error(
+									"Error getting current location",
+									error
+								);
+								alert(
+									"Error getting current location. Please enable location services and try again."
+								);
+							},
+							{ timeout: 3000 }
+						);
+					} else {
+						alert(
+							"Geolocation is not supported by this browser."
+						);
+					}
+				});
+			} else {
+				console.error(
+					"Kakao Maps script is not loaded correctly."
+				);
+			}
+		};
 
-      infowindow.setContent(content);
-      infowindow.open(map, marker);
-      setSelectedPlace(place);
-      if (homeLocation) {
-        const distance = calculateDistance(homeLocation.latitude, homeLocation.longitude, place.y, place.x);
-        setDistance(distance);
-      }
-    });
+		if (
+			typeof window !== "undefined" &&
+			typeof document !== "undefined"
+		) {
+			loadScript(
+				`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services&autoload=false`,
+				() => {
+					console.log("Kakao Maps script loaded.");
+					initializeMap();
+				}
+			);
+		}
+	}, []);
 
-    window.kakao.maps.event.addListener(map, "click", () => {
-      infowindow.close();
-    });
-  };
+	useEffect(() => {
+		if (map && homeLocation) {
+			const currentLocation = new window.kakao.maps.LatLng(
+				homeLocation.latitude,
+				homeLocation.longitude
+			);
+			map.setCenter(currentLocation);
 
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    return distance * 1000;
-  };
+			searchPlaces("코인 세탁", map, currentLocation, 1200);
+		}
+	}, [map, homeLocation]);
 
-  const router = useRouter();
+	const displayMarker = (
+		place: any,
+		map: any,
+		infowindow: any
+	) => {
+		const marker = new window.kakao.maps.Marker({
+			map: map,
+			position: new window.kakao.maps.LatLng(place.y, place.x),
+		});
 
-  const handleBackNavigation = () => {
-    router.push("/");
-  };
+		window.kakao.maps.event.addListener(marker, "click", () => {
+			const content = document.createElement("div");
+			content.style.padding = "5px";
+			content.style.fontSize = "12px";
+			content.style.textAlign = "center";
+			content.style.width = "150px";
+			content.style.whiteSpace = "pre-wrap";
+			content.style.wordBreak = "keep-all";
+			content.innerText = place.place_name;
 
-  return (
-    <div>
-      <div className="flex flex-col items-center">
-        <div className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]">
-          <TopNavigation text="지도로 세탁소 보기" onClick={handleBackNavigation} />
-        </div>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", height: "100vh" }}>
-        <div id="map" ref={mapRef} style={{ maxWidth: "430px", height: "400px", width: "100%", position: "relative" }} />
-        {selectedPlace && (
+			infowindow.setContent(content);
+			infowindow.open(map, marker);
+			setSelectedPlace(place);
+			if (homeLocation) {
+				const distance = calculateDistance(
+					homeLocation.latitude,
+					homeLocation.longitude,
+					place.y,
+					place.x
+				);
+				setDistance(distance);
+			}
+		});
+
+		window.kakao.maps.event.addListener(map, "click", () => {
+			infowindow.close();
+		});
+	};
+
+	const calculateDistance = (
+		lat1: number,
+		lon1: number,
+		lat2: number,
+		lon2: number
+	): number => {
+		const R = 6371;
+		const dLat = (lat2 - lat1) * (Math.PI / 180);
+		const dLon = (lon2 - lon1) * (Math.PI / 180);
+		const a =
+			Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+			Math.cos(lat1 * (Math.PI / 180)) *
+				Math.cos(lat2 * (Math.PI / 180)) *
+				Math.sin(dLon / 2) *
+				Math.sin(dLon / 2);
+		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		const distance = R * c;
+		return distance * 1000;
+	};
+
+	const router = useRouter();
+
+	const handleBackNavigation = () => {
+		router.push("/");
+	};
+
+	return (
+		<div>
+			<div className="flex flex-col items-center">
+				<div className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]">
+					<TopNavigation
+						text="지도로 세탁소 보기"
+						onClick={handleBackNavigation}
+					/>
+				</div>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					height: "100vh",
+				}}
+			>
+				<div
+					id="map"
+					ref={mapRef}
+					style={{
+						maxWidth: "430px",
+						height: "400px",
+						width: "100%",
+						position: "relative",
+					}}
+				/>
+				{selectedPlace && (
 					<div
 						style={{
 							width: "100%",
