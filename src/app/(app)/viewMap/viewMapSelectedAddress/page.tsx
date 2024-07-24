@@ -156,6 +156,10 @@ const MapWithSearch: React.FC = () => {
 		}
 	};
 
+	const handleMapClick = () => {
+		setSelectedPlace(null);
+	};
+
 	useEffect(() => {
 		if (map && (homeLocation || selectedAddressGPS)) {
 			const ps = new window.kakao.maps.services.Places();
@@ -230,6 +234,7 @@ const MapWithSearch: React.FC = () => {
 						}}
 						level={5}
 						onCreate={setMap}
+						onClick={handleMapClick}
 					>
 						<MapMarker
 							position={{
