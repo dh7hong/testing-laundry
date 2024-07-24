@@ -22,18 +22,51 @@ const MapWithSearch: React.FC = () => {
   useEffect(() => {
     const address = localStorage.getItem("selectedAddressGPS");
     if (address) {
-      // Geocode the address to get coordinates
-      const geocoder = new window.kakao.maps.services.Geocoder();
-      geocoder.addressSearch(address, (result, status) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-          setSelectedAddressGPS({ latitude: coords.getLat(), longitude: coords.getLng() });
-        } else {
-          console.error("Failed to geocode address:", status);
-        }
-      });
+      const loadKakaoMaps = () => {
+        const script = document.createElement("script");
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services`;
+        script.async = true;
+        script.onload = () => {
+          if (window.kakao && window.kakao.maps) {
+            const geocoder = new window.kakao.maps.services.Geocoder();
+            geocoder.addressSearch(address, (result, status) => {
+              if (status === window.kakao.maps.services.Status.OK) {
+                const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+                setSelectedAddressGPS({ latitude: coords.getLat(), longitude: coords.getLng() });
+              } else {
+                console.error("Failed to geocode address:", status);
+              }
+            });
+          }
+        };
+        script.onerror = () => {
+          console.error("Failed to load Kakao Maps script.");
+        };
+        document.head.appendChild(script);
+      };
+      loadKakaoMaps();
     }
   }, []);
+
+  useEffect(() => {
+    if (!selectedAddressGPS && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setHomeLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting current location", error);
+          alert("Error getting current location. Please enable location services and try again.");
+        },
+        { timeout: 3000 }
+      );
+    } else if (!navigator.geolocation) {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }, [selectedAddressGPS]);
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
     const R = 6371;
@@ -46,22 +79,30 @@ const MapWithSearch: React.FC = () => {
   };
 
   useEffect(() => {
-    if (selectedPlace && selectedAddressGPS) {
-      const distance = calculateDistance(selectedAddressGPS.latitude, selectedAddressGPS.longitude, selectedPlace.y, selectedPlace.x);
+    if (selectedPlace && (homeLocation || selectedAddressGPS)) {
+      const distance = calculateDistance(
+        selectedAddressGPS ? selectedAddressGPS.latitude : homeLocation.latitude,
+        selectedAddressGPS ? selectedAddressGPS.longitude : homeLocation.longitude,
+        selectedPlace.y, selectedPlace.x
+      );
       setDistance(distance);
     }
-  }, [selectedPlace, selectedAddressGPS]);
+  }, [selectedPlace, homeLocation, selectedAddressGPS]);
 
   const handleMarkerClick = (place: any) => {
     setSelectedPlace(place);
-    if (selectedAddressGPS) {
-      const distance = calculateDistance(selectedAddressGPS.latitude, selectedAddressGPS.longitude, place.y, place.x);
+    if (homeLocation || selectedAddressGPS) {
+      const distance = calculateDistance(
+        selectedAddressGPS ? selectedAddressGPS.latitude : homeLocation.latitude,
+        selectedAddressGPS ? selectedAddressGPS.longitude : homeLocation.longitude,
+        place.y, place.x
+      );
       setDistance(distance);
     }
   };
 
   useEffect(() => {
-    if (map && selectedAddressGPS) {
+    if (map && (homeLocation || selectedAddressGPS)) {
       const ps = new window.kakao.maps.services.Places();
 
       ps.keywordSearch("코인 세탁", (data: any, status: any) => {
@@ -77,11 +118,14 @@ const MapWithSearch: React.FC = () => {
           alert("Failed to search places. Please try again later.");
         }
       }, {
-        location: new window.kakao.maps.LatLng(selectedAddressGPS.latitude, selectedAddressGPS.longitude),
+        location: new window.kakao.maps.LatLng(
+          selectedAddressGPS ? selectedAddressGPS.latitude : homeLocation.latitude,
+          selectedAddressGPS ? selectedAddressGPS.longitude : homeLocation.longitude
+        ),
         radius: 1200,
       });
     }
-  }, [map, selectedAddressGPS]);
+  }, [map, homeLocation, selectedAddressGPS]);
 
   return (
     <div>
@@ -92,15 +136,15 @@ const MapWithSearch: React.FC = () => {
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", height: "100vh" }}>
-        {selectedAddressGPS && (
+        {(homeLocation || selectedAddressGPS) && (
           <Map
-            center={{ lat: selectedAddressGPS.latitude, lng: selectedAddressGPS.longitude }}
+            center={{ lat: selectedAddressGPS ? selectedAddressGPS.latitude : homeLocation.latitude, lng: selectedAddressGPS ? selectedAddressGPS.longitude : homeLocation.longitude }}
             style={{ width: "100%", height: "400px", maxWidth: "430px" }}
             level={5}
             onCreate={setMap}
           >
             <MapMarker
-              position={{ lat: selectedAddressGPS.latitude, lng: selectedAddressGPS.longitude }}
+              position={{ lat: selectedAddressGPS ? selectedAddressGPS.latitude : homeLocation.latitude, lng: selectedAddressGPS ? selectedAddressGPS.longitude : homeLocation.longitude }}
               image={{
                 src: "/assets/icons/misc/markerStar.png",
                 size: { width: 24, height: 35 },
@@ -108,7 +152,7 @@ const MapWithSearch: React.FC = () => {
               title="Selected Location"
             />
             <Circle
-              center={{ lat: selectedAddressGPS.latitude, lng: selectedAddressGPS.longitude }}
+              center={{ lat: selectedAddressGPS ? selectedAddressGPS.latitude : homeLocation.latitude, lng: selectedAddressGPS ? selectedAddressGPS.longitude : homeLocation.longitude }}
               radius={1200}
               strokeWeight={5}
               strokeColor="#75B8FA"
