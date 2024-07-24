@@ -28,8 +28,9 @@ export default function RootLayout({
 						content="width=device-width, initial-scale=1, maximum-scale=1"
 					/>
 					<Script
-						src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&autoload=false`}
+						src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer,drawing&autoload=false`}
 						strategy="beforeInteractive"
+						onError={() => console.error("Failed to load Kakao Maps script")}
 						/>
 				</head>
 				<body className={`${pretendard.className} min-h-screen`}>

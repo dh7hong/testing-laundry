@@ -189,7 +189,7 @@ const MapWithSearch: React.FC = () => {
 				}
 			);
 		}
-	}, []);
+	}, [searchPlaces]);
 
 	useEffect(() => {
 		if (map && homeLocation) {
@@ -201,7 +201,7 @@ const MapWithSearch: React.FC = () => {
 
 			searchPlaces("코인 세탁", map, currentLocation, 1200);
 		}
-	}, [map, homeLocation]);
+	}, [map, homeLocation, searchPlaces]);
 
 	const displayMarker = (
 		place: any,
