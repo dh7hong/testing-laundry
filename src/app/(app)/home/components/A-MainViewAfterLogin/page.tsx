@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ChevronRightIcon from "@/assets/icons/main/chevron-right.svg";
 import TShirtIcon from "@/assets/icons/main/tshirt.svg";
@@ -19,6 +19,18 @@ const MainView: React.FC = () => {
 	const [showDropdown, setShowDropdown] = useState(false);
 	const [address, setAddress] = useState("");
 	const router = useRouter();
+	const [shippingAddress, setShippingAddress] = useState("");
+
+	useEffect(() => {
+		const storedAddress = JSON.parse(
+			localStorage.getItem("shippingAddress") || "null"
+		);
+		if (storedAddress) {
+			setShippingAddress(storedAddress);
+		} else {
+			setShippingAddress("배송지를 입력해주세요");
+		}
+	}, []);
 
 	const handleSetInfo = () => {
 		router.push("/enterAddress/inputAddress/phoneStart");
@@ -28,7 +40,6 @@ const MainView: React.FC = () => {
 		router.push("/userGuide");
 	};
 
-	let shippingAddress = "" || "배송지를 입력해주세요";
 
 	const viewCoinLaundryNearby = () => {
 		if (shippingAddress === "배송지를 입력해주세요") {

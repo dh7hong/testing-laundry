@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import TopNavigation from "@/app/(public)/enterAddress/components/common/TopNavigation/page";
 import ActionButtonHalfLeft from "@/app/(public)/enterAddress/components/common/ActionButtonHalfLeft/page";
@@ -60,6 +60,14 @@ const CellularInput: React.FC = () => {
 			alert("Please enter a valid phone number.");
 		}
 	};
+
+	useEffect(() => {
+		const phoneNumber = JSON.parse(localStorage.getItem("phoneNumber") || "null");
+		console.log("Phone number from localStorage:", phoneNumber);
+		if (phoneNumber) {
+			setPhoneNumber(phoneNumber);
+		}
+	}, []);
 
 	return (
 		<div className="flex flex-col items-center bg-gray-50 min-h-screen overflow-hidden">
