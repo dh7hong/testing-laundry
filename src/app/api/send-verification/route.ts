@@ -9,75 +9,77 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
-const COOLDOWN_PERIOD_MS = 60000; // 1 minute cooldown
+const COOLDOWN_PERIOD_MS = 20000; // 1 minute cooldown
 
 export async function POST(req: NextRequest) {
-	try {
-		const { phoneNumber, resend } = await req.json();
+  try {
+    const { phoneNumber, resend } = await req.json();
 
-		if (!phoneNumber) {
-			return NextResponse.json(
-				{ message: "Phone number is required" },
-				{ status: 400 }
-			);
-		}
+    if (!phoneNumber) {
+      return NextResponse.json(
+        { message: "Phone number is required" },
+        { status: 400 }
+      );
+    }
 
-		const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
-		console.log("Formatted phone number:", formattedPhoneNumber);
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+    console.log("Formatted phone number:", formattedPhoneNumber);
+		console.log("Phone number:", phoneNumber);
 
-		await connectToDatabase();
+    await connectToDatabase();
 
-		const currentTime = new Date().getTime();
-		const existingRecord = await Verification.findOne({
-			phoneNumber: formattedPhoneNumber,
-		});
+    const currentTime = new Date().getTime();
 
-		if (existingRecord) {
-			if (
-				!resend &&
-				currentTime - existingRecord.timestamp <
-					COOLDOWN_PERIOD_MS
-			) {
-				return NextResponse.json(
-					{
-						message: "Please wait before requesting a new code",
-					},
-					{ status: 429 }
-				);
-			}
-		}
+    const existingRecord = await Verification.findOne({
+      $or: [
+        { phoneNumber: phoneNumber },
+        { formattedPhoneNumber: formattedPhoneNumber }
+      ]
+    });
 
-		const verificationCode = Math.floor(
-			100000 + Math.random() * 900000
-		); // Generate 6-digit code
-		await Verification.findOneAndUpdate(
-			{ phoneNumber: formattedPhoneNumber },
-			{ verificationCode, timestamp: currentTime },
-			{ upsert: true, new: true }
-		);
+    if (existingRecord) {
+      if (
+        !resend &&
+        currentTime - existingRecord.timestamp < COOLDOWN_PERIOD_MS
+      ) {
+        return NextResponse.json(
+          {
+            message: "Please wait before requesting a new code",
+          },
+          { status: 429 }
+        );
+      }
+    }
 
-		const message = await client.messages.create({
-			body: `Your verification code is ${verificationCode}`,
-			from: process.env.TWILIO_PHONE_NUMBER,
-			to: formattedPhoneNumber,
-		});
+    const verificationCode = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit code
+    await Verification.findOneAndUpdate(
+      { $or: [{ phoneNumber: phoneNumber }, { formattedPhoneNumber: formattedPhoneNumber }] },
+      { verificationCode, timestamp: currentTime, formattedPhoneNumber },
+      { upsert: true, new: true }
+    );
 
-		console.log(
-			"Verification code sent successfully:",
-			message.sid
-		);
+    const message = await client.messages.create({
+      body: `Your verification code is ${verificationCode}`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: formattedPhoneNumber,
+    });
 
-		return NextResponse.json({
-			message: "Verification code sent",
-		});
-	} catch (error: any) {
-		console.error("Error in /api/send-verification:", error);
-		return NextResponse.json(
-			{
-				message: "Failed to send verification code",
-				error: error.message,
-			},
-			{ status: 500 }
-		);
-	}
+    console.log(
+      "Verification code sent successfully:",
+      message.sid
+    );
+
+    return NextResponse.json({
+      message: "Verification code sent",
+    });
+  } catch (error: any) {
+    console.error("Error in /api/send-verification:", error);
+    return NextResponse.json(
+      {
+        message: "Failed to send verification code",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
 }

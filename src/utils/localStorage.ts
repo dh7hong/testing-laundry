@@ -56,13 +56,7 @@ export const combineAndSaveData = () => {
 		carrierOption &&
 		phoneNumber
 	) {
-		const id = `${shippingName.replace(
-			/\s+/g,
-			"-"
-		)}--${receiverName.replace(
-			/\s+/g,
-			"-"
-		)}--${phoneNumber.replace(/\s+/g, "-")}`;
+		const id = String(Math.floor(Math.random() * 1000000000));
 		const data = {
 			shippingName,
 			receiverName,

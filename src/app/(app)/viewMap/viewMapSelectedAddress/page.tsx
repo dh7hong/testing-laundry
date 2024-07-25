@@ -34,11 +34,11 @@ const MapWithSearch: React.FC = () => {
 		const loadKakaoMaps = () => {
 			return new Promise((resolve, reject) => {
 				const existingScript = document.querySelector(
-					`script[src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services"]`
+					`script[src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services&reload=false"]`
 				);
 				if (!existingScript) {
 					const script = document.createElement("script");
-					script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services`;
+					script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services&reload=false`;
 					script.async = true;
 					script.onload = () => resolve(window.kakao);
 					script.onerror = () =>
@@ -290,7 +290,7 @@ const MapWithSearch: React.FC = () => {
 										width: "150px",
 										whiteSpace: "pre-wrap",
 										wordBreak: "keep-all",
-										transform: "translateY(-150%)", // Move the box above the marker with extra space
+										transform: "translateY(-200%)", // Move the box above the marker with extra space
 										background: "white",
 										border: "1px solid #ccc",
 										borderRadius: "5px",

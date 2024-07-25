@@ -6,54 +6,42 @@ dotenv.config({ path: "./.env.local" });
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-	throw new Error(
-		"Please define the MONGODB_URI environment variable inside .env.local"
-	);
+  throw new Error(
+    "Please define the MONGODB_URI environment variable inside .env.local"
+  );
 }
 
 let cached = global.mongoose;
 
 if (!cached) {
-	cached = global.mongoose = { conn: null, promise: null };
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function connectToDatabase() {
-	if (cached.conn) {
-		return cached.conn;
-	}
+export async function connectToDatabase() {
+  // Check if the connection is already established
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
 
-	if (!cached.promise) {
-		const opts = {
-			bufferCommands: false,
-			dbName: "laundry", // Set the database name here
-		};
+  // Use cached connection if available
+  if (cached.conn) {
+    return cached.conn;
+  }
 
-		cached.promise = mongoose
-			.connect(MONGODB_URI, opts)
-			.then((mongoose) => {
-				return mongoose;
-			});
-	}
-	cached.conn = await cached.promise;
-	return cached.conn;
-}
+  // Create a new connection promise if not already created
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      dbName: "laundry", // Set the database name here
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    };
 
-export { connectToDatabase };
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      return mongoose;
+    });
+  }
 
-import Verification from "./models/Verification.ts";
-
-export async function updateAddressById(id, data) {
-	await connectToDatabase();
-
-	const updatedAddress = await Verification.findByIdAndUpdate(
-		id,
-		data,
-		{ new: true }
-	);
-	w;
-	if (!updatedAddress) {
-		throw new Error("Address not found");
-	}
-
-	return updatedAddress;
+  cached.conn = await cached.promise;
+  return cached.conn;
 }

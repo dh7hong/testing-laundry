@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { connectToDatabase } from '@/lib/mongoose.mjs';
+import { connectToDatabase } from '@/lib/mongoose';
 import Verification from '@/lib/models/Verification';
 import { formatPhoneNumber } from '@/utils/formatPhoneNumber';
 
@@ -18,7 +18,12 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    const record = await Verification.findOne({ phoneNumber: formattedPhoneNumber });
+    const record = await Verification.findOne({
+      $or: [
+        { phoneNumber: phoneNumber },
+        { formattedPhoneNumber: formattedPhoneNumber }
+      ]
+    });
 
     if (!record) {
       console.warn('Verification code not found');
@@ -37,9 +42,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Invalid verification code' }, { status: 400 });
     }
 
+    // Update the record to set isConfirmed to true
+    record.isConfirmed = true;
+    record.phoneNumber = record.phoneNumber || phoneNumber;  // Ensure phoneNumber is set
+    await record.save();
+
     console.log('Verification code is valid');
     return NextResponse.json({ message: 'Verification code is valid' });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in /api/verify-code:', error);
     return NextResponse.json({ message: 'Failed to verify code', error: error.message }, { status: 500 });
   }

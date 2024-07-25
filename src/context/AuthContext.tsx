@@ -12,11 +12,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedin, setIsLoggedin] = useState(false);
 
-  const login = () => setIsLoggedin(true);
-  const logout = () => setIsLoggedin(false);
+  const login = () => {
+    setIsLoggedin(true);
+    // Set a timeout to log out after 25 minutes (1,200,000 milliseconds)
+    setTimeout(() => {
+      setIsLoggedin(false);
+      localStorage.removeItem("phoneNumber");
+    }, 1200000);
+  };
 
-  console.log("AuthContext initialized");
-  console.log({ isLoggedin, login, logout });
+  const logout = () => setIsLoggedin(false);
 
   return (
     <AuthContext.Provider value={{ isLoggedin, login, logout }}>
