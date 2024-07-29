@@ -84,7 +84,14 @@ export const clearSpecificLocalStorageItems = () => {
 	if (typeof window !== "undefined") {
 		const phoneNumber = localStorage.getItem("phoneNumber");
 		const id = localStorage.getItem("editAddressId");
-		const keysToKeep = ["phoneNumber", "editAddressId"];
+		const timer = localStorage.getItem("timer");
+		const timestamp = localStorage.getItem("timestamp");
+		const keysToKeep = [
+			"phoneNumber",
+			"editAddressId",
+			"timer",
+			"timestamp",
+		];
 
 		Object.keys(localStorage).forEach((key) => {
 			if (!keysToKeep.includes(key)) {

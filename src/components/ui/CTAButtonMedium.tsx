@@ -14,6 +14,7 @@ const CTAButtonMedium: React.FC<CTAButtonProps> = ({
 	buttonTextWeight = 600,
 	buttonTextColor,
 	disabled = false,
+	onClick
 }) => {
 	const buttonStyles = {
 		width: buttonWidth,
@@ -22,11 +23,9 @@ const CTAButtonMedium: React.FC<CTAButtonProps> = ({
 		borderColor: borderColor,
 		borderWidth: borderThickness,
 		borderRadius: borderRadius,
-		text: buttonText,
 		fontSize: buttonTextSize,
 		fontWeight: buttonTextWeight,
 		color: buttonTextColor,
-		disabled: disabled,
 	};
 
 	return (
@@ -36,6 +35,7 @@ const CTAButtonMedium: React.FC<CTAButtonProps> = ({
 			}`}
 			style={buttonStyles}
 			disabled={disabled}
+			onClick={onClick} // Attach the onClick directly here
 		>
 			{buttonText}
 		</button>

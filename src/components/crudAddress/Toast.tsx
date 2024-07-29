@@ -6,6 +6,7 @@ import GreenCheckIcon from "@/assets/icons/editAddress/green-check.svg";
 interface ToastProps {
   message: string;
   show: boolean;
+  className?: string;
 }
 
 const Toast: React.FC<ToastProps> = ({ message, show }) => {

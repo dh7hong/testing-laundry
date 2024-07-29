@@ -225,6 +225,7 @@ const SearchAddress: FC = () => {
 						height: "300px",
 						margin: "5px 30px",
 						position: "relative",
+						marginBottom: "600px",
 					}}
 				>
 					<Image

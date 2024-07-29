@@ -29,6 +29,8 @@ const UserGuide = () => {
 			<section id="time">
 				<GuideTime />
 			</section>
+			<div className="mb-[400px]">
+			</div>
 		</>
 	);
 };

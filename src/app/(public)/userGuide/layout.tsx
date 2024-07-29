@@ -4,6 +4,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 import ArrowLeft from "@/assets/icons/userGuide/arrow-left.svg";
+import PricePage from "@/app/(public)/userGuide/price/page";
+import Image from "next/image";
+import Alert from "@/assets/icons/main/alert.svg";
+import LA_LOGO from "@/assets/icons/main/la_logo.svg";
 
 interface isAble {
 	introduce: boolean;
@@ -16,7 +20,7 @@ interface isAble {
 interface isPriceAble {
 	distance: boolean;
 	laundryPrice: boolean;
-
+	dryerPrice: boolean;
 	[key: string]: boolean;
 }
 
@@ -35,6 +39,7 @@ export default function Layout({
 	const [isPriceAble, setIsPriceAble] = useState<isPriceAble>({
 		distance: true,
 		laundryPrice: false,
+		dryerPrice: false,
 	});
 
 	const [isFixed, setIsFixed] = useState(false);
@@ -53,6 +58,7 @@ export default function Layout({
 	const priceList = [
 		{ name: "distance", text: "거리별 배송비" },
 		{ name: "laundryPrice", text: "세탁 요금" },
+		{ name: "dryerPrice", text: "건조기 요금" },
 	];
 
 	useEffect(() => {
@@ -74,7 +80,9 @@ export default function Layout({
 		};
 	}, []);
 
-	const handleIsAble = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleIsAble = (
+		e: React.MouseEvent<HTMLButtonElement>
+	) => {
 		const { name } = e.currentTarget;
 
 		setIsAble({
@@ -88,6 +96,7 @@ export default function Layout({
 		setIsPriceAble({
 			distance: false,
 			laundryPrice: false,
+			dryerPrice: false,
 			[name]: true,
 		});
 
@@ -96,13 +105,27 @@ export default function Layout({
 			setIsPriceAble({
 				distance: true,
 				laundryPrice: false,
+				dryerPrice: false,
 			});
 		}
 
-		const section = document.getElementById(name);
+		const section = document.getElementById(
+			name === "time" ? "time-section" : name
+		);
+
 		if (section) {
 			section.scrollIntoView({ behavior: "smooth" });
 		}
+
+		// Simulate double click by triggering another click event after a short delay
+		setTimeout(() => {
+			const section = document.getElementById(
+				name === "time" ? "time-section" : name
+			);
+			if (section) {
+				section.scrollIntoView({ behavior: "smooth" });
+			}
+		}, 100); // Adjust the delay as needed
 	};
 
 	const handleNavigate = () => {
@@ -118,15 +141,15 @@ export default function Layout({
 
 	return (
 		<div className="bg-gray-50 relative">
-			<div className=" pt-[20px] pb-[25px] w-[390px] mx-auto relative bg-[#FFF]">
+			<div className="pt-[20px] pb-[25px] w-[390px] mx-auto relative bg-[#FFF]">
 				{pathname === "/userGuide" && (
 					<div className="flex flex-col justify-between ">
 						<header
 							ref={headerRef}
 							className="px-[20px] flex flex-row justify-between py-2 bg-white"
 						>
-							<div>로고</div>
-							<div>알림</div>
+							<LA_LOGO />
+							<Alert />
 						</header>
 						<nav
 							style={{
@@ -134,7 +157,9 @@ export default function Layout({
 								top: isFixed ? 0 : "auto",
 								width: "390px",
 								zIndex: 100,
-								borderBottom: isFixed ? "1px solid #ddd" : "none",
+								borderBottom: isFixed
+									? "1px solid #ddd"
+									: "none",
 								backgroundColor: "white",
 							}}
 							className="flex flex-row justify-between"
@@ -167,27 +192,17 @@ export default function Layout({
 							<button onClick={handleNavigate}>
 								<ArrowLeft />
 							</button>
-							<p className=" text-static-black text-lg font-semibold">
+							<p className="text-static-black text-lg font-semibold">
 								가격표
 							</p>
 							<div />
 						</header>
-						<nav
-							// style={{
-							// 	position: isFixed ? "fixed" : "relative",
-							// 	top: isFixed ? 0 : "auto",
-							// 	width: "390px",
-							// 	zIndex: 100,
-							// 	borderBottom: isFixed ? "1px solid #ddd" : "none",
-							// 	backgroundColor: "white",
-							// }}
-							className=" px-5 flex flex-row justify-between"
-						>
+						<nav className="px-5 flex flex-row justify-between">
 							{priceList.map((nav) => (
 								<button
 									key={nav.name}
 									name={nav.name}
-									className={`  text-body-2-normal py-3 w-full border-b-2 bg-white ${
+									className={`text-body-2-normal py-3 w-full border-b-2 bg-white ${
 										isPriceAble[nav.name]
 											? "text-primary-normal border-primary-normal"
 											: "text-label-alternative border-line-normal"
@@ -199,7 +214,9 @@ export default function Layout({
 							))}
 						</nav>
 
-						<div>{children}</div>
+						<div>
+							<PricePage isPriceAble={isPriceAble} />
+						</div>
 					</div>
 				)}
 			</div>

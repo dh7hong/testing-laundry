@@ -8,7 +8,7 @@ import MintEllipse from "@/assets/icons/userGuide/ico-mintEllipse.svg";
 
 const GuideTime = () => {
 	return (
-		<section>
+		<section id="time-section">
 			<BasicDivider variant="thick" vertical={false} />
 			<div className=" py-12 px-5 flex flex-col">
 				<div className="">
@@ -28,8 +28,8 @@ const GuideTime = () => {
 					</div>
 					<div className="flex flex-row justify-between items-center bg-background-elevated-alternative rounded-t-md border-dashed border-b border-line-normal ">
 						<p className=" p-5 text-cool-neutral-40">평일</p>
-						<p className="p-5 text-label-alternative">
-							서비스 준비중입니다.
+						<p className="p-5 text-label-normal font-semibold">
+							09:00 ~ 21:00시
 						</p>
 					</div>
 					<div className="flex flex-row justify-between items-center bg-background-elevated-alternative rounded-b-md ">

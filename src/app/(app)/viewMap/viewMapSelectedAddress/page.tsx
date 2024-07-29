@@ -52,7 +52,7 @@ const MapWithSearch: React.FC = () => {
 			});
 		};
 
-		const address = localStorage.getItem("selectedAddressGPS");
+		const address = localStorage.getItem("selectedAddress");
 		if (address) {
 			loadKakaoMaps()
 				.then((kakao) => {
@@ -287,10 +287,10 @@ const MapWithSearch: React.FC = () => {
 										padding: "5px",
 										fontSize: "12px",
 										textAlign: "center",
-										width: "150px",
+										maxWidth: "150px",
 										whiteSpace: "pre-wrap",
 										wordBreak: "keep-all",
-										transform: "translateY(-200%)", // Move the box above the marker with extra space
+										transform: "translateY(-130%)", // Move the box above the marker with extra space
 										background: "white",
 										border: "1px solid #ccc",
 										borderRadius: "5px",

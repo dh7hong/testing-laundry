@@ -13,7 +13,6 @@ import Info from "@/assets/icons/main/information-circle.svg";
 import Volume from "@/assets/icons/main/volume.svg";
 import LaundryItem from "@/components/LaundryItem";
 import MainTopNavigation from "@/app/(app)/home/components/MainTopNavigation/page";
-import PopupInitial from "@/components/PopupInitial";
 
 const MainView: React.FC = () => {
 	const [showDropdown, setShowDropdown] = useState(false);

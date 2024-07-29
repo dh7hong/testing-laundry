@@ -15,13 +15,13 @@ const ShippingName: FC = () => {
 	const [inputValue, setInputValue] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	useEffect(() => {
-		const savedInput = localStorage.getItem("shippingName");
-		if (savedInput) {
-			setInputValue(savedInput);
-			setIsButtonGray(false);
-		}
-	}, []);
+	// useEffect(() => {
+	// 	const savedInput = localStorage.getItem("shippingName");
+	// 	if (savedInput) {
+	// 		setInputValue(savedInput);
+	// 		setIsButtonGray(false);
+	// 	}
+	// }, []);
 
 	const handleBackNavigation = () => {
 		router.push("/");

@@ -11,8 +11,8 @@ import Image from "next/image";
 import { BasicDivider } from "@/components/ui/BasicDivider";
 
 const DetailedLaundryPage = () => {
-		const totalTime = 32 * 60 * 60; // total time in seconds (32 hours)
-		const initialRemainingTime = 29 * 60 * 60 + 59 * 60; // remaining time in seconds (29 hours 59 minutes)
+		const totalTime = 60 * 60; // total time in seconds (32 hours)
+		const initialRemainingTime = 60 * 60; // remaining time in seconds (29 hours 59 minutes)
 	
 		const [remainingTime, setRemainingTime] = useState(
 			initialRemainingTime

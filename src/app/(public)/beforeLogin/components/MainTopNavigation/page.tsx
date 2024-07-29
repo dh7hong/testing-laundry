@@ -19,8 +19,8 @@ const TopNavigation: FC<TopNavigationProps> = ({
 		router.push("/enterAddress/inputAddress/phoneStart");
 	};
 
-	const handlePaymentInfo = () => {
-		router.push("/paymentInfo");
+	const handleLogin = () => {
+		router.push("/signup");
 	};
 
 	const handleAlertInfo = () => {
@@ -39,9 +39,9 @@ const TopNavigation: FC<TopNavigationProps> = ({
 			<div className="flex space-x-2">
 				<button
 					className="w-[53px] h-[28px] rounded-sm  bg-primary-normal text-white text-center text-label-1-normal font-normal"
-					onClick={handlePaymentInfo}
+					onClick={handleLogin}
 				>
-					가격표
+					로그인
 				</button>
 				<button
 					className="text-label-1-normal font-medium"

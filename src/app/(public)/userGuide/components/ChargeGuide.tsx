@@ -4,21 +4,35 @@ import React from "react";
 
 import { BasicDivider } from "@/components/ui/BasicDivider";
 import CTAButtonMedium from "@/components/ui/CTAButtonMedium";
+import { useRouter } from "next/navigation";
+import LA_LOGO from "@/assets/icons/main/la_logo.svg";
+// Correct import
 
 const ChargeGuide = () => {
+	const router = useRouter();
+	
+	const onClick = () => {
+		router.push("/userGuide/price");
+	};
+
 	return (
 		<section>
 			<BasicDivider variant="thick" vertical={false} />
 			<div className=" py-12 px-5 flex flex-col">
 				<div className="flex flex-row justify-center font-bold text-2xl mb-7 ">
-					<span className="text-label-normal">어플 이름</span>
-					<span className="text-primary-normal ml-2">이용 요금</span>
+					<LA_LOGO className=""/>
+					<span className="text-label-normal"> 세탁</span>
+					<span className="text-primary-normal ml-2">
+						이용 요금
+					</span>
 				</div>
 				<div className="text-center text-label-neutral leading-6 flex flex-col">
 					<div>사용자의 위치와 코인세탁소까지의</div>
 					<div className="flex flex-row justify-center items-center relative">
 						<span className="font-semibold relative">
-							<p className="z-10 text-label-normal relative">거리</p>
+							<p className="z-10 text-label-normal relative">
+								거리
+							</p>
 							<div className="w-full h-4 bg-primary-color-cyan-50 absolute top-3 left-0 z-0" />
 						</span>
 						<p className="relative z-10">
@@ -45,6 +59,7 @@ const ChargeGuide = () => {
 						buttonText="요금 자세히 알아보기"
 						buttonTextSize="16px"
 						buttonTextColor="#FFFFFF"
+						onClick={onClick} // Pass the onClick directly
 					/>
 				</div>
 			</div>

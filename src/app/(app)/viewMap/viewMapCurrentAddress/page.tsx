@@ -229,7 +229,7 @@ const ViewMapCurrentAddress: React.FC = () => {
 										width: "150px",
 										whiteSpace: "pre-wrap",
 										wordBreak: "keep-all",
-										transform: "translateY(-200%)",
+										transform: "translateY(-130%)",
 										background: "white",
 										border: "1px solid #ccc",
 										borderRadius: "5px",

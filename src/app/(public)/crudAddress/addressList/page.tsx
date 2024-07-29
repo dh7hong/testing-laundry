@@ -91,8 +91,8 @@ const AddressList: React.FC = () => {
 				(address: any) => address.isDefault
 			);
 			if (defaultAddress) {
-				localStorage.setItem("selectedAddressGPS", JSON.stringify(defaultAddress.selectedAddress));
-				localStorage.setItem("shippingNameGPS", JSON.stringify(defaultAddress.shippingName));
+				localStorage.setItem("selectedAddress", JSON.stringify(defaultAddress.selectedAddress));
+				localStorage.setItem("shippingName", JSON.stringify(defaultAddress.shippingName));
 				const regex = /[가-힣 ]+ [가-힣]+[구] [가-힣]+[로길]/;
 				const matchedAddress =
 					defaultAddress.selectedAddress.match(regex);
