@@ -49,9 +49,9 @@ export async function POST(req: NextRequest) {
 		const currentTime = new Date().getTime();
 
 		if (currentTime - record.timestamp > 3 * 60 * 1000) {
-			console.warn("Verification code has expired");
+			console.warn("인증번호가 만료되었습니다.");
 			return NextResponse.json(
-				{ message: "Verification code has expired" },
+				{ message: "인증번호가 만료되었습니다." },
 				{ status: 400 }
 			);
 		}
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 	} catch (error: any) {
 		console.error("Error in /api/verify-code:", error);
 		return NextResponse.json(
-			{ message: "Failed to verify code", error: error.message },
+			{ message: "인증 실패 했습니다.", error: error.message },
 			{ status: 500 }
 		);
 	}
