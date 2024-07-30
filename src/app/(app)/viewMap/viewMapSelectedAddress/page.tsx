@@ -290,6 +290,7 @@ const MapWithSearch: React.FC = () => {
               marginTop: "10px",
             }}
           >
+						
             <div className="text-label-1-normal font-medium text-neutral-70">
               {`서비스 가능 지역`}
             </div>
