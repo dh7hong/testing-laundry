@@ -62,13 +62,26 @@ const CellularInput: React.FC = () => {
   };
 
   useEffect(() => {
-    const storedPhoneNumber = JSON.parse(localStorage.getItem("phoneNumber") || "null");
-    console.log("Phone number from localStorage:", storedPhoneNumber);
+    const storedPhoneNumber = localStorage.getItem("phoneNumber");
+    let parsedPhoneNumber = null;
+  
     if (storedPhoneNumber) {
-      setPhoneNumber(storedPhoneNumber);
+      try {
+        parsedPhoneNumber = JSON.parse(storedPhoneNumber);
+      } catch (e) {
+        console.error("Error parsing JSON from localStorage:", e);
+        // Fallback to using the raw stored value if it's not valid JSON
+        parsedPhoneNumber = storedPhoneNumber;
+      }
+    }
+  
+    console.log("Phone number from localStorage:", parsedPhoneNumber);
+    if (parsedPhoneNumber) {
+      setPhoneNumber(parsedPhoneNumber);
     }
   }, []);
 
+  
   return (
     <div className="flex flex-col items-center bg-gray-50 min-h-screen overflow-hidden">
       <div className="w-full max-w-[430px] bg-white flex flex-col overflow-auto">

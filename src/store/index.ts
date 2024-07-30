@@ -29,6 +29,7 @@ export const loginSelector = selector({
 			const newAuthState = newValue as AuthState;
 			set(authState, newAuthState);
 			localStorage.setItem("auth", JSON.stringify(newAuthState)); // Save to localStorage
+			localStorage.setItem("phoneNumber", newAuthState.phoneNumber || "");
 		}
 	},
 });
@@ -69,7 +70,7 @@ export const extendTimerSelector = selector({
 	get: ({ get }) => get(timerState),
 	set: ({ set, get }) => {
 		const currentTimer = get(timerState);
-		const newTimer = currentTimer + 1800; // Extend by another 5 minutes
+		const newTimer = currentTimer - 100; // Extend by another 5 minutes
 		const timestamp = Date.now();
 		set(timerState, newTimer);
 		localStorage.setItem("timer", newTimer.toString());
