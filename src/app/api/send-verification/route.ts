@@ -9,7 +9,7 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
-const COOLDOWN_PERIOD_MS = 20000; // 1 minute cooldown
+const COOLDOWN_PERIOD_MS = 2000; // 1 minute cooldown
 
 export async function POST(req: NextRequest) {
   try {

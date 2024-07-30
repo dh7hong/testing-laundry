@@ -13,10 +13,6 @@ import { useRouter } from "next/navigation";
 const MapWithSearch: React.FC = () => {
 	const [map, setMap] = useState<any>(null);
 	const [selectedPlace, setSelectedPlace] = useState<any>(null);
-	const [homeLocation, setHomeLocation] = useState<{
-		latitude: number;
-		longitude: number;
-	} | null>(null);
 	const [distance, setDistance] = useState<number | null>(null);
 	const [places, setPlaces] = useState<any[]>([]);
 	const [selectedAddressGPS, setSelectedAddressGPS] = useState<{
@@ -55,26 +51,35 @@ const MapWithSearch: React.FC = () => {
 		const address = localStorage.getItem("selectedAddress");
 		if (address) {
 			loadKakaoMaps()
-				.then((kakao) => {
+				.then((kakao: any) => {
 					if (kakao && kakao.maps) {
 						const geocoder = new kakao.maps.services.Geocoder();
-						geocoder.addressSearch(address, (result, status) => {
-							if (status === kakao.maps.services.Status.OK) {
-								const coords = new kakao.maps.LatLng(
-									result[0].y,
-									result[0].x
-								);
-								setSelectedAddressGPS({
-									latitude: coords.getLat(),
-									longitude: coords.getLng(),
-								});
-							} else {
-								console.error(
-									"Failed to geocode address:",
-									status
-								);
+						geocoder.addressSearch(
+							address,
+							(
+								result: {
+									y: any;
+									x: any;
+								}[],
+								status: any
+							) => {
+								if (status === kakao.maps.services.Status.OK) {
+									const coords = new kakao.maps.LatLng(
+										result[0].y,
+										result[0].x
+									);
+									setSelectedAddressGPS({
+										latitude: coords.getLat(),
+										longitude: coords.getLng(),
+									});
+								} else {
+									console.error(
+										"Failed to geocode address:",
+										status
+									);
+								}
 							}
-						});
+						);
 					}
 				})
 				.catch((error) => console.error(error.message));
@@ -85,7 +90,7 @@ const MapWithSearch: React.FC = () => {
 		if (!selectedAddressGPS && navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
-					setHomeLocation({
+					setSelectedAddressGPS({
 						latitude: position.coords.latitude,
 						longitude: position.coords.longitude,
 					});
@@ -124,31 +129,23 @@ const MapWithSearch: React.FC = () => {
 	};
 
 	useEffect(() => {
-		if (selectedPlace && (homeLocation || selectedAddressGPS)) {
+		if (selectedPlace && selectedAddressGPS) {
 			const distance = calculateDistance(
-				selectedAddressGPS
-					? selectedAddressGPS.latitude
-					: homeLocation.latitude,
-				selectedAddressGPS
-					? selectedAddressGPS.longitude
-					: homeLocation.longitude,
+				selectedAddressGPS.latitude,
+				selectedAddressGPS.longitude,
 				selectedPlace.y,
 				selectedPlace.x
 			);
 			setDistance(distance);
 		}
-	}, [selectedPlace, homeLocation, selectedAddressGPS]);
+	}, [selectedPlace, selectedAddressGPS]);
 
 	const handleMarkerClick = (place: any) => {
 		setSelectedPlace(place);
-		if (homeLocation || selectedAddressGPS) {
+		if (selectedAddressGPS) {
 			const distance = calculateDistance(
-				selectedAddressGPS
-					? selectedAddressGPS.latitude
-					: homeLocation.latitude,
-				selectedAddressGPS
-					? selectedAddressGPS.longitude
-					: homeLocation.longitude,
+				selectedAddressGPS.latitude,
+				selectedAddressGPS.longitude,
 				place.y,
 				place.x
 			);
@@ -161,7 +158,7 @@ const MapWithSearch: React.FC = () => {
 	};
 
 	useEffect(() => {
-		if (map && (homeLocation || selectedAddressGPS)) {
+		if (map && selectedAddressGPS) {
 			const ps = new window.kakao.maps.services.Places();
 
 			ps.keywordSearch(
@@ -185,18 +182,14 @@ const MapWithSearch: React.FC = () => {
 				},
 				{
 					location: new window.kakao.maps.LatLng(
-						selectedAddressGPS
-							? selectedAddressGPS.latitude
-							: homeLocation.latitude,
-						selectedAddressGPS
-							? selectedAddressGPS.longitude
-							: homeLocation.longitude
+						selectedAddressGPS.latitude,
+						selectedAddressGPS.longitude
 					),
 					radius: 1200,
 				}
 			);
 		}
-	}, [map, homeLocation, selectedAddressGPS]);
+	}, [map, selectedAddressGPS]);
 
 	return (
 		<div>
@@ -217,15 +210,11 @@ const MapWithSearch: React.FC = () => {
 					height: "100vh",
 				}}
 			>
-				{(homeLocation || selectedAddressGPS) && (
+				{selectedAddressGPS && (
 					<Map
 						center={{
-							lat: selectedAddressGPS
-								? selectedAddressGPS.latitude
-								: homeLocation.latitude,
-							lng: selectedAddressGPS
-								? selectedAddressGPS.longitude
-								: homeLocation.longitude,
+							lat: selectedAddressGPS.latitude,
+							lng: selectedAddressGPS.longitude,
 						}}
 						style={{
 							width: "100%",
@@ -238,12 +227,8 @@ const MapWithSearch: React.FC = () => {
 					>
 						<MapMarker
 							position={{
-								lat: selectedAddressGPS
-									? selectedAddressGPS.latitude
-									: homeLocation.latitude,
-								lng: selectedAddressGPS
-									? selectedAddressGPS.longitude
-									: homeLocation.longitude,
+								lat: selectedAddressGPS.latitude,
+								lng: selectedAddressGPS.longitude,
 							}}
 							image={{
 								src: "/assets/icons/misc/markerStar.png",
@@ -253,12 +238,8 @@ const MapWithSearch: React.FC = () => {
 						/>
 						<Circle
 							center={{
-								lat: selectedAddressGPS
-									? selectedAddressGPS.latitude
-									: homeLocation.latitude,
-								lng: selectedAddressGPS
-									? selectedAddressGPS.longitude
-									: homeLocation.longitude,
+								lat: selectedAddressGPS.latitude,
+								lng: selectedAddressGPS.longitude,
 							}}
 							radius={1200}
 							strokeWeight={5}
