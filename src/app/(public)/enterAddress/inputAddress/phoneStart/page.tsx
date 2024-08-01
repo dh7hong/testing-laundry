@@ -1,4 +1,3 @@
-// src/app/(public)/enterAddress/components/cellular/CustomPhoneInput/page.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,7 +7,6 @@ import ActionButtonHalfRight from "@/app/(public)/enterAddress/components/common
 import ResetButton from "@/app/(public)/enterAddress/components/common/ResetButton/page";
 import ProgressBar from "@/app/(public)/enterAddress/components/common/ProgressBar/page";
 import CustomPhoneInput from "@/app/(public)/enterAddress/components/cellular/CustomPhoneInput/page"; // Adjust the path as needed
-import { getAddressesByPhoneNumber } from "@/utils/api";
 import { useAuth } from "@/context/AuthContext"; // Import useAuth
 
 const CellularInput: React.FC = () => {
@@ -51,10 +49,8 @@ const CellularInput: React.FC = () => {
 
   const goToListOfAddresses = async () => {
     if (phoneNumber.length === 13) {
-      localStorage.setItem("phoneNumber", phoneNumber);
+      localStorage.setItem("phoneNumber", JSON.stringify(phoneNumber));
       convertPhoneNumberToJson();
-      // await setDefaultShippingAddress(phoneNumber);
-      // console.log("default address set successfully to:", localStorage.getItem("shippingAddress"));
       router.push("/crudAddress/addressList");
     } else {
       alert("Please enter a valid phone number.");
@@ -63,25 +59,27 @@ const CellularInput: React.FC = () => {
 
   useEffect(() => {
     const storedPhoneNumber = localStorage.getItem("phoneNumber");
-    let parsedPhoneNumber = null;
-  
+    let parsedPhoneNumber: string | null = null;
+
     if (storedPhoneNumber) {
       try {
         parsedPhoneNumber = JSON.parse(storedPhoneNumber);
+        if (typeof parsedPhoneNumber !== "string") {
+          throw new Error("Parsed value is not a string");
+        }
       } catch (e) {
         console.error("Error parsing JSON from localStorage:", e);
         // Fallback to using the raw stored value if it's not valid JSON
         parsedPhoneNumber = storedPhoneNumber;
       }
     }
-  
+
     console.log("Phone number from localStorage:", parsedPhoneNumber);
     if (parsedPhoneNumber) {
       setPhoneNumber(parsedPhoneNumber);
     }
   }, []);
 
-  
   return (
     <div className="flex flex-col items-center bg-gray-50 min-h-screen overflow-hidden">
       <div className="w-full max-w-[430px] bg-white flex flex-col overflow-auto">

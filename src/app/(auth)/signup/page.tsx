@@ -82,6 +82,7 @@ export default function SignUp() {
       if (res.status === 200) {
         // Log the user in
         login(phoneNumber);
+        // localStorage.setItem("phoneNumber", phoneNumber);
         console.log("Logged in successfully"); // Add this line
       }
     } catch (error: any) {

@@ -274,7 +274,7 @@ const MapWithSearch: React.FC = () => {
 	return (
 		<div>
 			<div className="flex flex-col items-center bg-gray-50">
-				<div className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]">
+				<div className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]" style={{ wordBreak: "keep-all" }}>
 					<TopNavigation
 						text="지도로 세탁소 보기"
 						onClick={handleBackNavigation}

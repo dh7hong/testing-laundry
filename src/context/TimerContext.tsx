@@ -25,11 +25,11 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
 
   const timer = useRecoilValue(timerState);
   const startTimer = useSetRecoilState(startTimerSelector);
-  const extendTimerSetter = useSetRecoilState(extendTimerSelector);
+  const setExtendTimer = useSetRecoilState(extendTimerSelector);
   const updateTimer = useSetRecoilState(updateTimerSelector);
 
   const extendTimer = () => {
-    extendTimerSetter((currentTimer) => currentTimer + 300);
+    setExtendTimer((currentTimer) => currentTimer + 300); // Extend by another 5 minutes
   };
 
   useEffect(() => {
@@ -45,13 +45,12 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
 
         if (remainingTime > 0) {
           updateTimer(() => remainingTime);
-          console.log("Timer restored:", remainingTime);
         } else {
           logout(); // Log out if the remaining time is zero or less
           console.log("Timer expired, logging out");
         }
       } else {
-        startTimer(() => 300); // Start the timer with an initial value of 300 seconds (5 minutes)
+        startTimer(7200); // Start the timer with an initial value of 2 hours (7200 seconds)
       }
     }
   }, [isLoggedIn, startTimer, updateTimer, logout]);
@@ -70,7 +69,6 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
           } else {
             localStorage.setItem("timer", newTimer.toString());
             localStorage.setItem("timestamp", Date.now().toString());
-            console.log("Timer updated:", newTimer);
             return newTimer;
           }
         });

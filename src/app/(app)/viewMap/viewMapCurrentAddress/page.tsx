@@ -9,6 +9,7 @@ import {
 import TopNavigation from "@/app/(public)/crudAddress/components/common/TopNavigation/page";
 import { useRouter } from "next/navigation";
 
+// Utility function to get the current location
 export const getCurrentLocation = (): Promise<{
 	latitude: number;
 	longitude: number;
@@ -49,10 +50,12 @@ const ViewMapCurrentAddress: React.FC = () => {
 
 	const router = useRouter();
 
+	// Function to navigate back to the home page
 	const handleBackNavigation = () => {
 		router.push("/");
 	};
 
+	// Get the current location on component mount
 	useEffect(() => {
 		getCurrentLocation()
 			.then((location) => {
@@ -66,6 +69,7 @@ const ViewMapCurrentAddress: React.FC = () => {
 			});
 	}, []);
 
+	// Utility function to calculate the distance between two points
 	const calculateDistance = (
 		lat1: number,
 		lon1: number,
@@ -86,6 +90,7 @@ const ViewMapCurrentAddress: React.FC = () => {
 		return distance;
 	};
 
+	// Calculate distance for the selected place
 	useEffect(() => {
 		if (selectedPlace && currentLocation) {
 			const distance = calculateDistance(
@@ -98,6 +103,7 @@ const ViewMapCurrentAddress: React.FC = () => {
 		}
 	}, [selectedPlace, currentLocation]);
 
+	// Handle click event on a marker
 	const handleMarkerClick = (place: any) => {
 		setSelectedPlace(place);
 		if (currentLocation) {
@@ -111,10 +117,12 @@ const ViewMapCurrentAddress: React.FC = () => {
 		}
 	};
 
+	// Reset selected place on map click
 	const handleMapClick = () => {
 		setSelectedPlace(null);
 	};
 
+	// Perform keyword search to find places around the current location
 	useEffect(() => {
 		if (map && currentLocation) {
 			const ps = new window.kakao.maps.services.Places();
@@ -123,9 +131,22 @@ const ViewMapCurrentAddress: React.FC = () => {
 				"코인 세탁",
 				(data: any, status: any) => {
 					if (status === window.kakao.maps.services.Status.OK) {
-						setPlaces(data);
+						const placesWithDistance = data.map((place: any) => ({
+							...place,
+							distance: calculateDistance(
+								currentLocation.latitude,
+								currentLocation.longitude,
+								place.y,
+								place.x
+							),
+						}));
+						setPlaces(placesWithDistance);
+						localStorage.setItem(
+							"places",
+							JSON.stringify(placesWithDistance)
+						);
 						const bounds = new window.kakao.maps.LatLngBounds();
-						data.forEach((place: any) => {
+						placesWithDistance.forEach((place: any) => {
 							bounds.extend(
 								new window.kakao.maps.LatLng(place.y, place.x)
 							);
@@ -149,12 +170,20 @@ const ViewMapCurrentAddress: React.FC = () => {
 		}
 	}, [map, currentLocation]);
 
+	// Navigate to the list of all places nearby
+	const navigateToPlacesList = () => {
+		router.push("/viewMap/viewPlacesSelectedAddress");
+	};
+
 	return (
 		<div>
 			<div className="flex flex-col items-center">
-				<div className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]">
+				<div
+					className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]"
+					style={{ wordBreak: "keep-all" }}
+				>
 					<TopNavigation
-						text="지도로 세탁소 보기"
+						text="지도로 보기"
 						onClick={handleBackNavigation}
 					></TopNavigation>
 				</div>
@@ -273,10 +302,13 @@ const ViewMapCurrentAddress: React.FC = () => {
 							</div>
 						</div>
 						<div className="text-body-1-normal text-label-alternative mt-[2px]">
-							{selectedPlace.phone}
+							&nbsp;{selectedPlace.phone}
 						</div>
 					</div>
 				)}
+				<button className="pt-2" onClick={navigateToPlacesList}>
+					내 주위 모든 세탁 현황 보기
+				</button>
 			</div>
 		</div>
 	);

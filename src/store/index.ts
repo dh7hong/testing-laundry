@@ -29,7 +29,10 @@ export const loginSelector = selector({
 			const newAuthState = newValue as AuthState;
 			set(authState, newAuthState);
 			localStorage.setItem("auth", JSON.stringify(newAuthState)); // Save to localStorage
-			localStorage.setItem("phoneNumber", newAuthState.phoneNumber || "");
+			localStorage.setItem(
+				"phoneNumber",
+				newAuthState.phoneNumber || ""
+			);
 		}
 	},
 });
@@ -51,7 +54,7 @@ export const startTimerSelector = selector({
 	key: "startTimerSelector",
 	get: ({ get }) => get(timerState),
 	set: ({ set }) => {
-		const newTimer = 1800; // 5 minutes
+		const newTimer = 7200; // 2 hours
 		const timestamp = Date.now();
 		set(timerState, newTimer);
 		localStorage.setItem("timer", newTimer.toString());
@@ -70,7 +73,7 @@ export const extendTimerSelector = selector({
 	get: ({ get }) => get(timerState),
 	set: ({ set, get }) => {
 		const currentTimer = get(timerState);
-		const newTimer = currentTimer - 100; // Extend by another 5 minutes
+		const newTimer = currentTimer + 300; // Extend by another 5 minutes
 		const timestamp = Date.now();
 		set(timerState, newTimer);
 		localStorage.setItem("timer", newTimer.toString());
@@ -100,11 +103,37 @@ export const updateTimerSelector = selector({
 
 			if (remainingTime > 0) {
 				set(timerState, remainingTime);
-				console.log("Timer restored:", remainingTime);
 			} else {
 				set(authState, initialAuthState); // Log out if the remaining time is zero or less
 				console.log("Timer expired, logging out");
 			}
 		}
 	},
+});
+
+// New Atom for Remaining Time Until 3 PM
+export const timeUntil3pmState = atom<number>({
+  key: "timeUntil3pmState",
+  default: calculateTimeUntil3pm(),
+});
+
+export function calculateTimeUntil3pm(): number {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(15, 0, 0, 0); // Set target time to 15:00:00 (3 PM)
+
+  if (now > target) {
+    target.setDate(target.getDate() + 1); // If now is past 3 PM, set target to 3 PM tomorrow
+  }
+
+  const diff = target.getTime() - now.getTime();
+  return Math.floor(diff / 1000); // Return difference in seconds
+}
+
+export const updateTimeUntil3pmSelector = selector({
+  key: "updateTimeUntil3pmSelector",
+  get: ({ get }) => get(timeUntil3pmState),
+  set: ({ set }) => {
+    set(timeUntil3pmState, calculateTimeUntil3pm());
+  },
 });
