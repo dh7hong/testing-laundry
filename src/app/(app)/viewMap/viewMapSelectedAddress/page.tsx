@@ -349,12 +349,15 @@ const MapWithSearch: React.FC = () => {
 						</div>
 					</div>
 				)}
+				<div className="w-full max-w-[430px] px-[20px]">
 				<button
           className="mt-4 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 w-full max-w-[430px]"
           onClick={navigateToPlacesList}
         >
           내 주위 모든 세탁 현황 보기
         </button>
+
+				</div>
 			</div>
 		</div>
 	);

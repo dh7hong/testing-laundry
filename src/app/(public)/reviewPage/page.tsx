@@ -86,7 +86,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({
 	);
 
 	return (
-		<div className="p-4 bg-white rounded-md border mx-auto relative border-line-neutral w-full mb-[75px]">
+		<div className="p-4 bg-white rounded-md border mx-auto relative border-line-neutral w-full mb-[10px]">
 			<div className="flex justify-between items-start">
 				<div className="flex flex-col">
 					<div className="flex items-center mb-1">

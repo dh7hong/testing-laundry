@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import ReviewPage from "@/app/(public)/reviewPage/page";
+import ReviewForm from "@/app/(public)/reviewForm/page";
+import { useAuth } from "@/context/AuthContext";
 
 type Review = {
 	reviewerName: string;
@@ -380,74 +382,68 @@ const staticImages = [
 ];
 
 // The Reviews component
-const Reviews = () => {
-	const [reviewsData, setReviewsData] = useState<Review[]>(
-		Array.from({ length: 50 }, (_, index) => ({
-			reviewerName: staticPhoneNumbers[index],
-			reviewDate: staticDates[index],
-			laundromatName:
-				laundromatNames[index % laundromatNames.length],
-			laundromatType:
-				laundromatTypes[index % laundromatTypes.length],
-			rating: staticRatings[index % staticRatings.length],
-			text: reviewTexts[index % reviewTexts.length],
-			images: staticImages[index % staticImages.length],
-		}))
-	);
+const Reviews: React.FC = () => {
+  const [reviewsData, setReviewsData] = useState<Review[]>(
+    Array.from({ length: 50 }, (_, index) => ({
+      reviewerName: staticPhoneNumbers[index],
+      reviewDate: staticDates[index],
+      laundromatName: laundromatNames[index % laundromatNames.length],
+      laundromatType: laundromatTypes[index % laundromatTypes.length],
+      rating: staticRatings[index % staticRatings.length],
+      text: reviewTexts[index % reviewTexts.length],
+      images: staticImages[index % staticImages.length],
+    }))
+  );
 
-	// Handling new reviews
-	const handleNewReview = (reviewData: {
-		rating: number;
-		reviewText: string; // Fix the property name to match the expected structure
-		uploadedImages: string[]; // Fix the property name to match the expected structure
-	}) => {
-		const newReview: Review = {
-			reviewerName: "010-00******", // Placeholder
-			reviewDate: new Date().toISOString().slice(0, 10),
-			laundromatName: "서울 랜덤 세탁소",
-			laundromatType:
-				laundromatTypes[
-					Math.floor(Math.random() * laundromatTypes.length)
-				],
-			rating: reviewData.rating,
-			text: reviewData.reviewText, // Use the correct property name
-			images: reviewData.uploadedImages, // Use the correct property name
-		};
+  const { isLoggedIn } = useAuth(); // Get the authentication state
 
-		// Adding the new review to the top of the list
-		setReviewsData((prevReviews) => {
-			const updatedReviews = [newReview, ...prevReviews];
-			return updatedReviews.sort((a, b) => {
-				const dateA = new Date(a.reviewDate);
-				const dateB = new Date(b.reviewDate);
-				return dateB.getTime() - dateA.getTime();
-			});
-		});
-	};
-	return (
-		<div>
-			<ReviewPage
-				isEditable={true}
-				initialRating={0}
-				initialText=""
-				initialImages={[]}
-				onSubmit={handleNewReview}
-			/>
+  // Handling new reviews
+  const handleNewReview = (reviewData: {
+    rating: number;
+    reviewText: string;
+    uploadedImages: string[];
+  }) => {
+    const newReview: Review = {
+      reviewerName: "010-00******", // Placeholder
+      reviewDate: new Date().toISOString().slice(0, 10),
+      laundromatName: "서울 랜덤 세탁소",
+      laundromatType: laundromatTypes[Math.floor(Math.random() * laundromatTypes.length)],
+      rating: reviewData.rating,
+      text: reviewData.reviewText,
+      images: reviewData.uploadedImages,
+    };
 
-			{reviewsData.map((review, index) => (
-				<ReviewPage
-					key={index}
-					isEditable={false}
-					initialRating={review.rating}
-					initialText={review.text}
-					initialImages={review.images}
-					reviewerName={review.reviewerName}
-					reviewDate={review.reviewDate}
-					laundromatName={`${review.laundromatName} ${review.laundromatType}`}
-				/>
-			))}
-		</div>
-	);
+    // Adding the new review to the top of the list
+    setReviewsData((prevReviews) => {
+      const updatedReviews = [newReview, ...prevReviews];
+      return updatedReviews.sort((a, b) => {
+        const dateA = new Date(a.reviewDate);
+        const dateB = new Date(b.reviewDate);
+        return dateB.getTime() - dateA.getTime();
+      });
+    });
+  };
+
+  return (
+    <div>
+      {isLoggedIn && (
+        <ReviewForm onSubmit={handleNewReview} isLoggedIn={isLoggedIn} />
+      )}
+
+      {reviewsData.map((review, index) => (
+        <ReviewPage
+          key={index}
+          isEditable={false}
+          initialRating={review.rating}
+          initialText={review.text}
+          initialImages={review.images}
+          reviewerName={review.reviewerName}
+          reviewDate={review.reviewDate}
+          laundromatName={`${review.laundromatName} ${review.laundromatType}`}
+        />
+      ))}
+    </div>
+  );
 };
 
 export default Reviews;
