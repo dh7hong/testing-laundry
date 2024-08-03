@@ -1,5 +1,5 @@
 import ChevronRightIconLarge from "@/assets/icons/others/chevron-right-large.svg";
-import ReviewPage from "@/app/(public)/beforeLogin/components/E-ReviewPageBeforeLogin/page";
+import Reviews from "@/app/(public)/reviews/page";
 
 const ContainerReviewPage = () => {
 	return (
@@ -23,7 +23,7 @@ const ContainerReviewPage = () => {
 					<div className="flex w-full overflow-x-auto">
 						<div className="ml-[20px] mb-[40px] w-full max-w-[calc(100%-40px)]">
 							<div className="flex">
-								<ReviewPage isEditable={false} />
+								<Reviews />
 							</div>
 						</div>
 					</div>
