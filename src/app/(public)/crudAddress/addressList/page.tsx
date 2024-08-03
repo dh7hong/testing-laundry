@@ -44,7 +44,7 @@ export const setDefaultShippingAddress = async (phoneNumber: string) => {
           JSON.stringify(matchedAddress[0])
         );
       }
-
+			
       // Geocode the default address to get its coordinates
       const loadKakaoMaps = (): Promise<any> => {
         return new Promise((resolve, reject) => {
@@ -118,6 +118,8 @@ const AddressList: React.FC = () => {
   const [phoneNumber] = useLocalStorage<string>("phoneNumber", "");
   const router = useRouter();
 
+
+	
   useEffect(() => {
     if (phoneNumber) {
       fetchAddresses(phoneNumber);

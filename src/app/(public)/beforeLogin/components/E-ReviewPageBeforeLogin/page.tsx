@@ -115,7 +115,7 @@ const ReviewPage = ({ isEditable }: { isEditable: boolean }) => {
 							)}
 						</Space>
 					</div>
-					<div className="">idf*****</div>
+					<div className="">010-23******</div>
 				</div>
 				<div className="text-label-alternative text-caption-2">
 					2024.05.01

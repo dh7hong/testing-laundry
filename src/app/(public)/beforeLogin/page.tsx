@@ -5,13 +5,15 @@ import ContainerInactiveLaundryPageSolo from "@/app/(public)/beforeLogin/compone
 import ContainerInactiveLaundryPageTeam from "@/app/(public)/beforeLogin/components/B-ContainerLaundryPageBeforeLogin-team/page";
 import AppFooter from "@/app/(public)/beforeLogin/components/F-Footer/page";
 import ContainerReviewPage from "@/app/(public)/beforeLogin/components/D-ContainerReviewBeforeLogin/page";
+import ViewMapCurrentAddress from "@/app/(app)/viewMap/viewMapCurrentAddress/page";
 
 export default function BeforeLoginHomePage() {
 	return (
 		<div>
 			<MainView />
-			<ContainerInactiveLaundryPageSolo />
-			<ContainerInactiveLaundryPageTeam />
+			<ViewMapCurrentAddress />
+			{/* <ContainerInactiveLaundryPageSolo />
+			<ContainerInactiveLaundryPageTeam /> */}
 			<ContainerReviewPage />
 			<AppFooter />
 		</div>

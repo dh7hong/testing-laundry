@@ -221,7 +221,10 @@ const MapWithSearch: React.FC = () => {
 	return (
 		<div>
 			<div className="flex flex-col items-center">
-				<div className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]" style={{ wordBreak: "keep-all" }}>
+				<div
+					className="w-full max-w-[430px] bg-static-white flex flex-col pt-[5px]"
+					style={{ wordBreak: "keep-all" }}
+				>
 					<TopNavigation
 						text="지도로 보기"
 						onClick={handleBackNavigation}
@@ -346,9 +349,12 @@ const MapWithSearch: React.FC = () => {
 						</div>
 					</div>
 				)}
-				<button className="pt-2" onClick={navigateToPlacesList}>
-					내 주위 모든 세탁 현황 보기
-				</button>
+				<button
+          className="mt-4 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 w-full max-w-[430px]"
+          onClick={navigateToPlacesList}
+        >
+          내 주위 모든 세탁 현황 보기
+        </button>
 			</div>
 		</div>
 	);

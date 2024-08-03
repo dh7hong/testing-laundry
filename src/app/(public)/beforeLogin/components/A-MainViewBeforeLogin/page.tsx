@@ -15,6 +15,7 @@ import BedIconSmall from "@/assets/icons/main/bed-small.svg";
 import TShirtIconSmall from "@/assets/icons/main/tshirt-small.svg";
 import { setDefaultShippingAddress } from "@/app/(public)/crudAddress/addressList/page"; // import your function
 import { useLocalStorage } from "@/app/hooks/useLocalStorage";
+import ViewMapCurrentAddress from "@/app/(app)/viewMap/viewMapCurrentAddress/page";
 
 const MainView: React.FC = () => {
   const router = useRouter();
@@ -126,6 +127,7 @@ const MainView: React.FC = () => {
               내 주위 이용 가능한 코인 세탁소 보기
             </span>
           </button>
+            
         </div>
       </div>
     </div>

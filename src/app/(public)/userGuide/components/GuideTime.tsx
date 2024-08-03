@@ -91,10 +91,16 @@ const GuideTime = () => {
 					<div className="flex flex-row mt-4 justify-between items-center w-full">
 						<div className="flex flex-col justify-center items-center ">
 							<p className="text-sm text-label-assistive font-semibold">
-								오늘
+								평일
 							</p>
 							<p className="text-sm text-label-alternative font-semibold">
-								13:00 부터
+								09:00 부터
+							</p>
+							<p className="text-sm text-label-alternative font-semibold">
+								주말
+							</p>
+							<p className="text-sm text-label-alternative font-semibold">
+								(13:00 부터)
 							</p>
 						</div>
 						<div className="flex flex-col justify-center items-center translate-x-2">

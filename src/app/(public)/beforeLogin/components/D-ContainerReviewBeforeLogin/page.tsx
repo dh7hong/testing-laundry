@@ -6,7 +6,7 @@ const ContainerReviewPage = () => {
 		<>
 			<div className="flex justify-center items-center bg-gray-50">
 				<div className="w-full max-w-[430px] bg-white flex flex-col justify-center items-center mb-[30px]">
-					<div className="w-full mb-4 px-4">
+					<div className="w-full mb-8 px-4">
 						<div className="flex justify-between items-center">
 							<div className="flex-1">
 								<div className="flex items-center justify-between">

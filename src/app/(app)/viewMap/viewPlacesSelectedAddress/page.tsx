@@ -125,7 +125,7 @@ const PlacesList: React.FC = () => {
 						</div>
 						<div className="ml-[8px] rounded-md text-[#878A93]">
 							<div className="flex flex-col items-left mb-3">
-								<span className="font-semibold text-black text-headline-2 ml-1 mt-1">
+								<span className="font-semibold text-black text-headline-2 ml-1 mt-1" style={{ wordBreak: "keep-all" }}>
 									{`${place.place_name}`}
 								</span>
 								<div>

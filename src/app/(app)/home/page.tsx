@@ -5,13 +5,15 @@ import ContainerActiveLaundryPageSolo from "@/app/(app)/home/components/B-Contai
 import ContainerActiveLaundryPageTeam from "@/app/(app)/home/components/B-ContainerLaundryPageAfterLogin-team/page";
 import AppFooter from "@/app/(app)/home/components/F-Footer/page";
 import ContainerReviewPage from "@/app/(app)/home/components/D-ContainerReviewAfterLogin/page";
+import ViewMapCurrentAddress from "@/app/(app)/viewMap/viewMapCurrentAddress/page";
 
 export default function HomePage() {
 	return (
 		<div>
 			<MainView />
-			<ContainerActiveLaundryPageSolo />
-			<ContainerActiveLaundryPageTeam />
+			<ViewMapCurrentAddress />
+			{/* <ContainerActiveLaundryPageSolo />
+			<ContainerActiveLaundryPageTeam /> */}
 			<ContainerReviewPage />
 			<AppFooter />
 		</div>

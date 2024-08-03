@@ -24,7 +24,7 @@
 		"@svgr/webpack": "^8.1.0",
 		"@turf/turf": "^7.0.0",
 		"@types/mapbox-gl": "^3.1.0",
-		"antd": "^5.19.3",
+		"antd": "^5.19.4",
 		"axios": "^1.7.2",
 		"clusterer": "^0.2.0",
 		"corner-smoothing": "^0.1.5",
