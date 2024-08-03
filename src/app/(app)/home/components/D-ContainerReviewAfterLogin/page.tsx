@@ -1,6 +1,5 @@
 import ChevronRightIconLarge from "@/assets/icons/others/chevron-right-large.svg";
-import ReviewPage from "@/app/(app)/home/components/E-ReviewPageAfterLogin/page";
-
+import Reviews from "@/app/(public)/reviews/page";
 const ContainerReviewPage = () => {
 	return (
 		<>
@@ -14,8 +13,12 @@ const ContainerReviewPage = () => {
 										사용자들의 내돈내산 후기
 									</h2>
 								</div>
-								<p className="text-label-1-normal text-label-alternative" style={{ wordBreak: "keep-all" }}>
-									리뷰는 결제 내역이 있는 실제 사용자들만 남길 수 있어요!
+								<p
+									className="text-label-1-normal text-label-alternative"
+									style={{ wordBreak: "keep-all" }}
+								>
+									리뷰는 결제 내역이 있는 실제 사용자들만 남길 수
+									있어요!
 								</p>
 							</div>
 						</div>
@@ -23,7 +26,7 @@ const ContainerReviewPage = () => {
 					<div className="flex w-full overflow-x-auto">
 						<div className="ml-[20px] mb-[40px] w-full max-w-[calc(100%-40px)]">
 							<div className="flex">
-								<ReviewPage isEditable={false} />
+								<Reviews />
 							</div>
 						</div>
 					</div>
